@@ -1,0 +1,16 @@
+- Criar novo projeto
+- ativar api Google People API
+- Apis & Serviços > Credenciais
+  - Configurar tela de consentimento
+    - Externo
+  - Criar credenciais de ID Cliente OAuth
+    - Tipo de aplicativo: Aplicativo da Web
+    - Adicionar URI de redirecionamento autorizado
+      - http://localhost
+    - baixar arquivo JSON
+  - Criar credenciais de ID Cliente OAuth
+    - Tipo de aplicativo: Android
+    - Nome do pacote: com.seu.pacote
+    - Certificado de assinatura SHA-1: pegar com comando keytool
+      - keytool -list -v -keystore "C:\Users\alexlsilva7\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+  - projeto de teste de login colocando o id do cliente web
