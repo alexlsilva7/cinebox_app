@@ -1,5 +1,7 @@
-import 'package:cinebox/ui/core/themes/resource.dart';
+import 'package:cinebox/ui/core/themes/assets.gen.dart';
 import 'package:cinebox/ui/core/widgets/loader_messages.dart';
+import 'package:cinebox/ui/splash/commands/check_user_logged_command.dart';
+import 'package:cinebox/ui/splash/splash_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,12 +14,46 @@ class SplashPage extends ConsumerStatefulWidget {
 
 class _SplashPageState extends ConsumerState<SplashPage> with LoaderAndMessage {
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ref.read(splashViewModelProvider).checkLoginAndRedirect();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.listen(checkUserLoggedCommandProvider, (previous, next) {
+      next.whenOrNull(
+        data: (data) {
+          final route = switch (data) {
+            true => '/home',
+            false => '/login',
+            _ => '',
+          };
+
+          if (route.isNotEmpty && context.mounted) {
+            // Remover todas as rotas e navegar para a rota desejada
+            Navigator.of(
+              context,
+            ).pushNamedAndRemoveUntil(route, (route) => false);
+          }
+        },
+        error: (error, stackTrace) {
+          if (context.mounted) {
+            showErrorSnackbar('Erro ao verificar login: $error');
+            Navigator.of(
+              context,
+            ).pushNamedAndRemoveUntil('/login', (route) => false);
+          }
+        },
+      );
+    });
+
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset(
-            R.ASSETS_IMAGES_BG_LOGIN_PNG,
+          Assets.images.bgLogin.image(
             width: double.infinity,
             height: double.infinity,
             fit: BoxFit.cover,
@@ -37,8 +73,7 @@ class _SplashPageState extends ConsumerState<SplashPage> with LoaderAndMessage {
             ),
           ),
           Center(
-            child: Image.asset(
-              R.ASSETS_IMAGES_LOGO_PNG,
+            child: Assets.images.logo.image(
               width: 200,
               height: 200,
             ),

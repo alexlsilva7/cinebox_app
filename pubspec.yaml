@@ -35,3 +35,6 @@ flutter:
 
   assets:
     - assets/images/
+
+flutter_gen:
+  output: lib/ui/core/themes
